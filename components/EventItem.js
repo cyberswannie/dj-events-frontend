@@ -8,7 +8,15 @@ export default function EventItem({evt}) {
     <div className={styles.event}>
         
         <div key={ evt.id } className={styles.img}>
-            <Image alt={ evt.name } src={ evt.image ? evt.image : "/images/event-default.png" } width={170} height={100} />
+            <Image alt={ evt.name } 
+                src={ 
+                    evt.image 
+                    ? evt.image.data.attributes.formats.thumbnail.url 
+                    : "/images/event-default.png" 
+                } 
+                width={170} 
+                height={100} 
+            />
         </div>
 
         <div className={ styles.info }>

@@ -29,22 +29,26 @@ export default function EventPage( { evt }) {
           </div>
 
           <span>
-            {new Date(evt.date).toLocaleDateString('en-GB')} at {evt.time}
+            {new Date(evt.attributes.date).toLocaleDateString('en-GB')} at {evt.attributes.time}
           </span>
-          <h1>{evt.name}</h1>
+          <h1>{evt.attributes.name}</h1>
 
-          {evt.image && (
+          {evt.attributes.image && (
             <div className={styles.image}>
-              <Image alt={evt.name} src={evt.image} width={960} height={600} />
+              <Image alt={evt.attributes.name} 
+              src={evt.attributes.image.data.attributes.formats.large.url} 
+              width={960} 
+              height={600} 
+            />
             </div>
           )}
 
           <h3>Performers:</h3>
-          <p>{evt.performers}</p>
+          <p>{evt.attributes.performers}</p>
           <h3>Description:</h3>
-          <p>{evt.description}</p>
-          <h3>Venue: {evt.venue}</h3>
-          <p>{evt.address}</p>
+          <p>{evt.attributes.description}</p>
+          <h3>Venue: {evt.attributes.venue}</h3>
+          <p>{evt.attributes.address}</p>
 
           <Link href='/events'>
             <a className={styles.back}>{'<'} Go Back</a>
@@ -56,10 +60,11 @@ export default function EventPage( { evt }) {
 }
 
 export async function getStaticPaths() {
-  const res = await fetch(`${API_URL}/api/events`)
-  const events = await res.json()
+  const res = await fetch(`${API_URL}/api/events?populate=*`)
+  const json = await res.json()
+  const events = json.data
   const paths = events.map((evt) => ({
-     params: { slug: evt.slug },
+     params: { slug: evt.attributes.slug },
   }))
 
   return {
@@ -70,8 +75,9 @@ export async function getStaticPaths() {
 
 export async function getStaticProps( { params: {slug} } ){
 
-  const res = await fetch(`${API_URL}/api/events/${slug}`)
-  const events = await res.json()
+  const res = await fetch(`${API_URL}/api/events/?filters[slug][$eq]=${slug}&populate=*`)
+  const json = await res.json()
+  const events = json.data
 
   return {
     props: {
