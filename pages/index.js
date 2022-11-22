@@ -13,7 +13,6 @@ export default function HomePage({ events }) {
           <EventItem key={evt.id} evt={evt.attributes} />  
       ))}
 
-
       { events.length > 0 && (
       <Link href="/events">
         <a className="btn-secondary">View All Events</a>

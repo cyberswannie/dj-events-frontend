@@ -6,19 +6,19 @@ import styles from '@/styles/Form.module.css'
 import { API_URL } from "@/config/index"
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { formatDateForInput } from '@/utils/formatDate';
 
-export default function AddEventPage() {
+export default function EditEventPage( {evt} ) {
 
 const [values, setValues] = useState({
-  name: '',
-  performers: '',
-  venue: '',
-  address: '',
-  date: '',
-  time: '',
-  description: ''
+  name: evt.name,
+  performers: evt.performers,
+  venue: evt.venue,
+  address: evt.address,
+  date: formatDateForInput(evt.date),
+  time: evt.time,
+  description: evt.description
 })
-
 
 const router = useRouter()
 const handleSubmit = async (e) => {
@@ -65,7 +65,7 @@ const handleInputChange = (e) => {
       <ToastContainer 
         theme="dark" />
 
-        <h1>Add new event</h1>
+        <h1>Edit event</h1>
 
         <form className={styles.form} onSubmit={handleSubmit}>
 
@@ -150,10 +150,21 @@ const handleInputChange = (e) => {
               ></textarea>
             </div>
 
-            <input type='submit' value='Add Event' className='btn' />
+            <input type='submit' value='Update Event' className='btn' />
 
         </form>
 
     </Layout>
   )
+}
+
+export async function getServerSideProps({params:{id}}) {
+    const res = await fetch(`${API_URL}/api/events/${id}`)
+    const json = await res.json()
+    const evt = json.data.attributes
+    
+    return {
+      props: { evt }
+    }
+
 }
